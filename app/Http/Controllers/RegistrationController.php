@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ValidateUserRegistration;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class RegistrationController extends Controller
 {
     public function showRegistrationForm()
     {
-        return view('auth/register');
+        return Inertia::render('Auth/Register');
     }
 
     public function register(ValidateUserRegistration $request)
@@ -22,10 +23,5 @@ class RegistrationController extends Controller
         ]);
 
         return redirect('/dashboard');
-    }
-
-    public function showDashboard()
-    {
-        return view('dashboard');
     }
 }
