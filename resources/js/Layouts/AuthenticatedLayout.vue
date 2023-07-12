@@ -8,6 +8,10 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+function removeId() {
+    localStorage.clear();
+}
 </script>
 
 <template>
@@ -31,6 +35,14 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
+                                </NavLink>
+
+                                <NavLink :href="route('posts')" :active="route().current('posts')">
+                                    Posts
+                                </NavLink>
+
+                                <NavLink :href="route('new_post')" :active="route().current('new_post')">
+                                    New Post
                                 </NavLink>
                             </div>
                         </div>
@@ -65,9 +77,11 @@ const showingNavigationDropdown = ref(false);
 
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
-                                        </DropdownLink>
+                                        <span @click="removeId">
+                                            <DropdownLink :href="route('logout')" method="post" as="button">
+                                                Log Out
+                                            </DropdownLink>
+                                        </span>
                                     </template>
                                 </Dropdown>
                             </div>
@@ -128,9 +142,11 @@ const showingNavigationDropdown = ref(false);
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Log Out
-                            </ResponsiveNavLink>
+                            <span @click="removeId">
+                                <ResponsiveNavLink :href="route('logout')" method="post" as="button">
+                                    Log Out
+                                </ResponsiveNavLink>
+                            </span>
                         </div>
                     </div>
                 </div>

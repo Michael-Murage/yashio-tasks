@@ -25,4 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/posts', [AuthenticatedSessionController::class, 'showPosts'])->middleware(['auth', 'verified'])->name('posts');
+Route::get('/new_post', [AuthenticatedSessionController::class, 'showNewPost'])->middleware(['auth', 'verified'])->name('new_post');
+Route::get('/posts/{post_id}', [AuthenticatedSessionController::class, 'showSinglePost'])->middleware(['auth', 'verified'])->name('single_post');
+
 require __DIR__.'/auth.php';

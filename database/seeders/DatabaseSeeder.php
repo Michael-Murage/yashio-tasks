@@ -12,11 +12,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        echo("Seeding tags...\n");
+        $tags = ["laravel", "docker", "ubuntu", "ubuntu-20.04", "laravel-sail"];
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        for ($i = 0; $i < count($tags); $i++) {
+            \App\Models\Tag::create([
+                'name' => $tags[$i]
+            ]);
+        }
+        
+        echo("Seeding successful!\n");
     }
 }
