@@ -18,9 +18,10 @@ class PostController extends Controller
      */
     public function index(Request $request, $key): JsonResponse
     {
-        $searchParam = $request->query('s');
+        $title = $request->query('title');
+        $tag = $request->query('tag');
 
-        if (!$searchParam || $searchParam == "undefined")
+        if (!$title && !$tag)
         {
             return response()
                 ->json(
@@ -31,14 +32,36 @@ class PostController extends Controller
         }
         else
         {
-            $posts = Post::with('tags')
+            if ($title && !$tag)
+            {
+                $posts = Post::with('tags')
+                            ->where('posts.user_id', intval($key))
+                            ->where('posts.title', 'LIKE', "%$title%")
+                            ->paginate(2);
+                return response()->json($posts);
+            }
+            else if (!$title && $tag)
+            {
+                $posts = Post::with('tags')
+                            ->where('posts.user_id', intval($key))
+                            ->whereHas('tags', function ($query) use ($tag) {
+                                $query->where('tags.name', 'LIKE', "%$tag%");
+                            })
+                            ->paginate(2);
+                return response()->json($posts);
+            }
+            else
+            {
+                $posts = Post::with('tags')
                         ->where('posts.user_id', intval($key))
-                        ->where('posts.title', 'LIKE', "%$searchParam%")
-                        ->orWhereHas('tags', function ($query) use ($searchParam) {
-                            $query->where('tags.name', 'LIKE', "%$searchParam%");
+                        ->where('posts.title', 'LIKE', "%$title%")
+                        ->whereHas('tags', function ($query) use ($tag) {
+                            $query->where('tags.name', 'LIKE', "%$tag%");
                         })
                         ->paginate(2);
-            return response()->json($posts);
+                return response()->json($posts);
+            }
+            
         }
     }
 

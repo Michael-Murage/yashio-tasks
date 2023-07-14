@@ -1,72 +1,23 @@
 <script setup>
-import { ref, watch, toRefs } from 'vue';
-import { debounce } from 'vue-debounce';
-import { onMounted } from 'vue';
+import { ref, toRefs, onMounted, watch } from 'vue';
 
-const props = defineProps(['url', 'searchInput']);
-const { searchInput } = toRefs(props);
-const url = ref('');
-const posts = ref({});
+const props = defineProps(['posts']);
+
+defineEmits(['next', 'previous']);
+
+const { posts } = toRefs(props);
 const limit = ref(null);
-
-async function fetchPosts(url, page) {
-    let currentUrl;
-    if (window.location.pathname === '/search') {
-        currentUrl = `${url}&page=${page}`
-    } else {
-        currentUrl = `${url}?page=${page}`
-    }
-    try {
-        const resp = await fetch(currentUrl);
-        if (resp.ok) {
-            const jsonResp = await resp.json();
-            posts.value = jsonResp;
-            limit.value = Math.ceil(jsonResp.total / jsonResp.per_page);
-        } else {
-            const errorJson = await resp.json();
-            console.error(errorJson.message);
-        }
-    } catch (error) {
-        console.error(error.message);
-    }
-}
-
-function nextPage() {
-    const nextPageNumber = posts.value.current_page + 1;
-    if (window.location.pathname === '/search') {
-        fetchPosts(`${url.value}?=s=${searchInput.value}`, nextPageNumber);
-    } else {
-        fetchPosts(url.value, nextPageNumber);
-    }
-}
-
-function previousPage() {
-    const prevPageNumber = posts.value.current_page - 1;
-    if (window.location.pathname === '/search') {
-        fetchPosts(`${url.value}?=s=${searchInput.value}`, prevPageNumber);
-    } else {
-        fetchPosts(url.value, prevPageNumber);
-    }
-}
-
-const debouncedWatch = debounce(() => {
-    fetchPosts(`${url.value}?s=${searchInput.value}`, 1);
-}, 1000);
-
-watch(searchInput, () => {
-    debouncedWatch();
-});
 
 function switchToSinglePostPage(id) {
     window.location.href = `/posts/${id}`;
 }
 
+watch(posts, () => {
+    limit.value = Math.ceil(posts.value.total / posts.value.per_page);
+});
+
 onMounted(() => {
-    url.value = props.url;
-    searchInput.value = props.searchInput;
-    if (window.location.pathname === '/posts') {
-        fetchPosts(url.value, 1);
-    }
+    limit.value = Math.ceil(posts.value.total / posts.value.per_page);
 });
 </script>
 <template>
@@ -102,7 +53,7 @@ onMounted(() => {
         <button 
             class="relative inline-flex items-center rounded-l-md border px-2 py-2 text-sm font-medium focus:z-20 disabled:opacity-50 bg-white text-gray-500 border-gray-300 hover:bg-gray-50"
             :disabled="posts.current_page <= 1"
-            @click="previousPage"
+            @click="this.$emit('previous')"
         >
             <span class="sr-only">
                 Previous
@@ -118,7 +69,7 @@ onMounted(() => {
         <button 
             class="relative inline-flex items-center rounded-r-md border px-2 py-2 text-sm font-medium focus:z-20 disabled:opacity-50 bg-white text-gray-500 border-gray-300 hover:bg-gray-50" 
             :disabled="posts.current_page >= limit"
-            @click="nextPage"
+            @click="this.$emit('next')"
         >
             <span class="sr-only">
                 Next
