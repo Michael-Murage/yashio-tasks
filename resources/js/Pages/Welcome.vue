@@ -1,4 +1,5 @@
 <script setup>
+import ThemeToggle from '@/Components/ThemeToggle.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
 defineProps({
@@ -15,6 +16,7 @@ defineProps({
     <Head title="Notepad: Welcome" />
 
     <div class="flex bg-white dark:bg-gray-900" style="height: 100vh;">
+        <ThemeToggle />
         <div class="mx-auto my-auto flex flex-col px-16" v-if="canLogin">
             <Link 
                 v-if="$page.props.auth.user"

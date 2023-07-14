@@ -22,7 +22,7 @@ onMounted(() => {
 </script>
 <template>
     <div 
-        class="bg-white dark:bg-gray-800 p-2 my-2 rounded-lg hover:scale-95"
+        class="bg-white bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100 p-2 my-2 rounded-lg hover:scale-95"
         v-for="post in (Array.isArray(posts.data) ? posts.data : [])"
         :key="post.id"
         @click="switchToSinglePostPage(post.id)"
