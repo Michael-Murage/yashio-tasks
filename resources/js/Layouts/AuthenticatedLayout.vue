@@ -1,17 +1,92 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 
 const showingNavigationDropdown = ref(false);
+const darkModeToggle = ref(null);
+const lightModeToggle = ref(null);
 
 function removeId() {
     localStorage.clear();
 }
+
+function applyDarkMode() {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+    darkModeToggle.value.classList.remove('hidden');
+    lightModeToggle.value.classList.add('hidden');
+}
+
+function applyLightMode() {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    localStorage.setItem('theme', 'light');
+    lightModeToggle.value.classList.remove('hidden');
+    darkModeToggle.value.classList.add('hidden');
+}
+
+function switchTheme() {
+    if (localStorage.getItem('theme') === 'light') {
+        applyDarkMode();
+    } else if(localStorage.getItem('theme') === 'dark') {
+        applyLightMode();
+    } else {
+        applySystemTheme();
+    }
+}
+
+function applySystemTheme() {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        applyDarkMode();
+    } else {
+        applyLightMode();
+    }
+}
+
+function applyLocalTheme() {
+    if (localStorage.getItem('theme') === 'light') {
+        applyLightMode();
+    } else {
+        applyLightMode();
+    }
+}
+
+function checkCurrentTheme() {
+    if (!('theme' in localStorage)) {
+        applySystemTheme();
+    } else {
+        applyLocalTheme();
+    }
+}
+
+// function isSystemThemeLight() {
+//     if (window.matchMedia('(prefers-color-scheme: dark)').matches) return false;
+//     else return true;
+// }
+
+// function isLocalStorageThemeLight() {
+//     if (localStorage.getItem('theme') === 'light') return true;
+//     else return false;
+// }
+
+// function isLightTheme() {
+//     if ('theme' in localStorage) return isLocalStorageThemeLight();
+//     else return isSystemThemeLight();
+// }
+
+// onMounted(() => {
+//     lightModeToggle.value.value = lightModeToggle.value.id;
+//     darkModeToggle.value.value = darkModeToggle.value.id;
+//     checkCurrentTheme();
+// });
+
 </script>
 
 <template>
@@ -44,6 +119,18 @@ function removeId() {
                                 <NavLink :href="route('new_post')" :active="route().current('new_post')">
                                     New Post
                                 </NavLink>
+                                <NavLink :href="route('search')" :active="route().current('search')">
+                                    Search
+                                </NavLink>
+                                <!-- <button 
+                                    id="theme-toggle-button" 
+                                    type="button" 
+                                    class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 my-auto"
+                                    @click="switchTheme"
+                                >
+                                    <img ref="lightModeToggle" src="/assets/light.svg" alt="" id="light-theme-toggle" class="w-5 h-5">
+                                    <img ref="darkModeToggle" src="/assets/dark.svg" alt="" id="dark-theme-toggle" class="w-5 h-5">
+                                </button> -->
                             </div>
                         </div>
 
@@ -125,9 +212,26 @@ function removeId() {
                     :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
                     class="sm:hidden"
                 >
+                    <!-- <button 
+                        id="theme-toggle-button" 
+                        type="button" 
+                        class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 my-auto"
+                        @click="switchTheme"
+                    >
+                        <img ref="themeToggle" src="/assets/light.svg" alt="" id="theme-toggle" class="w-5 h-5">
+                    </button> -->
                     <div class="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('posts')" :active="route().current('posts')">
+                            Posts
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('new_post')" :active="route().current('new_post')">
+                            New Post
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href="route('search')" :active="route().current('search')">
+                            Search
                         </ResponsiveNavLink>
                     </div>
 

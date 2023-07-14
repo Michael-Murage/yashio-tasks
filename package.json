@@ -19,6 +19,7 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "vue-debounce": "^4.0.0",
         "vue3-toastify": "^0.1.11"
     }
 }

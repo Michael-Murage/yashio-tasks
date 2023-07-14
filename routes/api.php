@@ -21,4 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', [ProfileController::class, 'retu
 Route::get('/tags', [TagController::class, 'index']);
 
 Route::post('/posts', [PostController::class, 'store']);
-Route::get('/posts/{id}', [PostController::class, 'index']);
+Route::get('/posts/{user_id}', [PostController::class, 'index']);

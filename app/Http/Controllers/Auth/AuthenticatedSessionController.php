@@ -17,6 +17,14 @@ use Illuminate\Foundation\Application;
 class AuthenticatedSessionController extends Controller
 {
     /**
+     * Display Search view
+     */
+    public function showSearch(): Response
+    {
+        return Inertia::render('Search');
+    }
+
+    /**
      * Display SinglePost view
      */
     public function showSinglePost($key): Response

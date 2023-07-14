@@ -29,4 +29,6 @@ Route::get('/posts', [AuthenticatedSessionController::class, 'showPosts'])->midd
 Route::get('/new_post', [AuthenticatedSessionController::class, 'showNewPost'])->middleware(['auth', 'verified'])->name('new_post');
 Route::get('/posts/{post_id}', [AuthenticatedSessionController::class, 'showSinglePost'])->middleware(['auth', 'verified'])->name('single_post');
 
+Route::get('/search', [AuthenticatedSessionController::class, 'showSearch'])->middleware(['auth', 'verified'])->name('search');
+
 require __DIR__.'/auth.php';

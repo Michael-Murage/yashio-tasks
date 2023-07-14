@@ -16,14 +16,30 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($key): JsonResponse
+    public function index(Request $request, $key): JsonResponse
     {
-        return response()
-            ->json(
-                Post::with('tags')
-                    ->where('posts.user_id', intval($key))
-                    ->get()
-            );
+        $searchParam = $request->query('s');
+
+        if (!$searchParam || $searchParam == "undefined")
+        {
+            return response()
+                ->json(
+                    Post::with('tags')
+                        ->where('posts.user_id', intval($key))
+                        ->paginate(2)
+                );
+        }
+        else
+        {
+            $posts = Post::with('tags')
+                        ->where('posts.user_id', intval($key))
+                        ->where('posts.title', 'LIKE', "%$searchParam%")
+                        ->orWhereHas('tags', function ($query) use ($searchParam) {
+                            $query->where('tags.name', 'LIKE', "%$searchParam%");
+                        })
+                        ->paginate(2);
+            return response()->json($posts);
+        }
     }
 
     /**
